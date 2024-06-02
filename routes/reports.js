@@ -65,7 +65,6 @@ router.get('/category-wise-expenses', async (req, res) => {
 
     res.json(categoryWiseExpenses);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'An error occurred while retrieving the expenses' });
   }
 });
