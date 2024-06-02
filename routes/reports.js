@@ -22,11 +22,11 @@ router.get('/monthly', async (req, res) => {
   });
 
   const totalIncome = transactions
-    .filter(t => t.type === 'INCOME')
+    .filter(t => t.type === 'EARN')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpense = transactions
-    .filter(t => t.type === 'EXPENSE')
+    .filter(t => t.type === 'SPEND')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const leftBalance = totalIncome - totalExpense;

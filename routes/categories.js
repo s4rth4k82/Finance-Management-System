@@ -13,11 +13,21 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   const { name } = req.body;
 
+  // Validate name
+  const existingCategory = await prisma.category.findFirst({
+    where: {name: name}
+  })
+
+  if (existingCategory) {
+    return res.status(400).json({ error: 'Category already exists' });
+  }
+
   const category = await prisma.category.create({
     data: { name },
   });
 
   res.json(category);
 });
+
 
 module.exports = router;
