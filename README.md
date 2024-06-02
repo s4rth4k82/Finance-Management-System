@@ -52,15 +52,10 @@ The Personal Finance Management System is a backend application developed to man
 
 4. **Run Prisma migrations:**
     ```bash
-    npx prisma migrate dev --name init
+    npx prisma migrate dev
     ```
 
-5. **Generate Prisma client:**
-    ```bash
-    npx prisma generate
-    ```
-
-6. **Start the server:**
+5. **Start the server:**
     ```bash
     npx nodemon index.js
     ```
