@@ -1,13 +1,13 @@
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const express = require("express");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const authenticateToken = require('../middleware/auth');
+const authenticateToken = require("../middleware/auth");
 const router = express.Router();
 
 router.use(authenticateToken);
 
 // Get monthly financial report
-router.get('/monthly', async (req, res) => {
+router.get("/monthly", async (req, res) => {
   const userId = req.user.userId;
   const { month, year } = req.query;
 
@@ -22,28 +22,31 @@ router.get('/monthly', async (req, res) => {
   });
 
   const totalIncome = transactions
-    .filter(t => t.type === 'EARN')
+    .filter((t) => t.type === "EARN")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpense = transactions
-    .filter(t => t.type === 'SPEND')
+    .filter((t) => t.type === "SPEND")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const leftBalance = totalIncome - totalExpense;
 
+  if (leftBalance < 0) {
+    return res.status(400).json({ error: "You have spent more than you have earned" });
+  }
   res.json({ totalIncome, totalExpense, leftBalance });
 });
 
-router.get('/category-wise-expenses', async (req, res) => {
+router.get("/category-wise-expenses", async (req, res) => {
   const userId = req.user.userId;
 
   try {
     // Group transactions by categoryId and sum the amount
     const expenses = await prisma.transaction.groupBy({
-      by: ['categoryName'],
+      by: ["categoryName"],
       where: {
         userId,
-        type: 'SPEND',
+        type: "SPEND",
       },
       _sum: {
         amount: true,
@@ -65,9 +68,10 @@ router.get('/category-wise-expenses', async (req, res) => {
 
     res.json(categoryWiseExpenses);
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while retrieving the expenses' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the expenses" });
   }
 });
-
 
 module.exports = router;
